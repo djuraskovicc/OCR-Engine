@@ -24,17 +24,63 @@ int main(void)
         std::cerr << "Image not found or couldn't be loaded." << std::endl;
         return -1;
     }
-
+    
     filter.addBilateralFilter(img, addedFilter);
     filter.addWeight(addedFilter, img, addedFilter);
     filter.gaussianBlur(addedFilter, addedFilter);
     filter.scaleAbs(addedFilter, addedFilter);
-    filter.threshold(addedFilter, addedFilter);
-    filter.~Filters();
+    filter.adaptiveThreshold(addedFilter, addedFilter);
 
-    processing.dilate(addedFilter, processedImage);
-    processing.~Processing();
+    processing.erode(addedFilter, processedImage);
 
+    while(1){
+        int c = cv::waitKey(1);
+
+        if((char) c == 'q'){
+            std::cout << "Pressed Q: EXIT" << std::endl;
+            break;
+        } /*else if ((char) c == 'b'){
+            std::cout << "Pressed B" << std::endl;
+            filter.blockSize += 2;
+            std::cout << "blockSize value: " << filter.blockSize << std::endl;
+            filter.adaptiveThreshold(addedFilter, threshold);
+        } else if ((char) c == 'c'){
+            std::cout << "Pressed C" << std::endl;
+            filter.blockSize -= 2;
+            std::cout << "blockSize value: " << filter.blockSize << std::endl;
+            filter.adaptiveThreshold(addedFilter, threshold);
+        } else if ((char) c == 'd'){
+            std::cout << "Pressed D" << std::endl;
+            filter.C += 1;
+            std::cout << "C value: " << filter.C << std::endl;
+            filter.adaptiveThreshold(addedFilter, threshold);
+        } else if ((char) c == 'e'){
+            std::cout << "Pressed E" << std::endl;
+            filter.C -= 1;
+            std::cout << "C value: " << filter.C << std::endl;
+            filter.adaptiveThreshold(addedFilter, threshold);
+        } /*else if ((char) c == 'f'){
+            std::cout << "Pressed F" << std::endl;
+            filter.z += 10;
+            std::cout << "z value: " << filter.z << std::endl;
+            filter.threshold(addedFilter, threshold);
+        } else if ((char) c == 'g'){
+            std::cout << "Pressed G" << std::endl;
+            filter.z -= 10;
+            std::cout << "z value: " << filter.z << std::endl;
+            filter.threshold(addedFilter, threshold);
+        }*/
+
+        cv::namedWindow("Filter", cv::WINDOW_NORMAL);
+        cv::imshow("Filter", processedImage);
+    }
+
+    return 0;
+}
+
+
+// Code za tesseract
+/*
     tesseract::TessBaseAPI ocr;
 
     if (ocr.Init(NULL, "eng")) {
@@ -47,11 +93,4 @@ int main(void)
 
     std::string extractedText = ocr.GetUTF8Text();
     std::cout << "\nExtracted text: \n" << extractedText << std::endl;
-
-    cv::namedWindow("Filter", cv::WINDOW_NORMAL);
-    cv::imshow("Filter", processedImage);
-
-    cv::waitKey(0);
-
-    return 0;
-}
+*/

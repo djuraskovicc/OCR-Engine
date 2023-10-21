@@ -13,8 +13,12 @@ class Filters {
         void gaussianBlur(cv::Mat &picture, cv::Mat &result);
         void scaleAbs(cv::Mat &picture, cv::Mat &result);
         void threshold(cv::Mat &picture, cv::Mat &result);
+        void adaptiveThreshold(cv::Mat &picture, cv::Mat &result);
 
         ~Filters();
+    public:
+        int blockSize = 11;
+        double C = 2;
 };
 
 #endif
