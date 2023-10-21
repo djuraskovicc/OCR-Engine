@@ -16,9 +16,6 @@ class Filters {
         void adaptiveThreshold(cv::Mat &picture, cv::Mat &result);
 
         ~Filters();
-    public:
-        int blockSize = 11;
-        double C = 2;
 };
 
 #endif

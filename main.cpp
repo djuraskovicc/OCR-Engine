@@ -17,7 +17,7 @@ int main(void)
     std::cout << "Enter file path: ";
     std::cin >> path;
 
-    cv::Mat img = cv::imread(path, cv::IMREAD_GRAYSCALE);
+    cv::Mat img = cv::imread(path, cv::IMREAD_COLOR);
     cv::Mat addedFilter, processedImage;
 
     if (img.empty()) {
@@ -29,17 +29,40 @@ int main(void)
     filter.addWeight(addedFilter, img, addedFilter);
     filter.gaussianBlur(addedFilter, addedFilter);
     filter.scaleAbs(addedFilter, addedFilter);
-    filter.adaptiveThreshold(addedFilter, addedFilter);
+    filter.threshold(addedFilter, addedFilter);
+    filter.~Filters();
 
     processing.erode(addedFilter, processedImage);
+    filter.~Filters();
 
-    while(1){
+    tesseract::TessBaseAPI ocr;
+
+    if (ocr.Init(NULL, "eng")) {
+        std::cerr << "Could not initialize Tesseract." << std::endl;
+        return -1;
+    }
+
+    ocr.SetPageSegMode(tesseract::PSM_SINGLE_BLOCK);
+
+    ocr.SetImage(processedImage.data, processedImage.cols, processedImage.rows, 3, processedImage.step);
+    ocr.Recognize(0);
+
+    std::string extractedText = ocr.GetUTF8Text();
+    std::cout << "\nExtracted text: \n" << extractedText << std::endl;
+
+    cv::namedWindow("Filter", cv::WINDOW_NORMAL);
+    cv::imshow("Filter", processedImage);
+    cv::waitKey(0);
+
+    return 0;
+}
+
+/*while (1){
         int c = cv::waitKey(1);
 
         if((char) c == 'q'){
-            std::cout << "Pressed Q: EXIT" << std::endl;
             break;
-        } /*else if ((char) c == 'b'){
+        } else if ((char) c == 'b'){
             std::cout << "Pressed B" << std::endl;
             filter.blockSize += 2;
             std::cout << "blockSize value: " << filter.blockSize << std::endl;
@@ -59,38 +82,8 @@ int main(void)
             filter.C -= 1;
             std::cout << "C value: " << filter.C << std::endl;
             filter.adaptiveThreshold(addedFilter, threshold);
-        } /*else if ((char) c == 'f'){
-            std::cout << "Pressed F" << std::endl;
-            filter.z += 10;
-            std::cout << "z value: " << filter.z << std::endl;
-            filter.threshold(addedFilter, threshold);
-        } else if ((char) c == 'g'){
-            std::cout << "Pressed G" << std::endl;
-            filter.z -= 10;
-            std::cout << "z value: " << filter.z << std::endl;
-            filter.threshold(addedFilter, threshold);
-        }*/
+        }
 
         cv::namedWindow("Filter", cv::WINDOW_NORMAL);
-        cv::imshow("Filter", processedImage);
-    }
-
-    return 0;
-}
-
-
-// Code za tesseract
-/*
-    tesseract::TessBaseAPI ocr;
-
-    if (ocr.Init(NULL, "eng")) {
-        std::cerr << "Could not initialize Tesseract." << std::endl;
-        return -1;
-    }
-
-    ocr.SetImage(processedImage.data, processedImage.cols, processedImage.rows, 3, processedImage.step);
-    ocr.Recognize(0);
-
-    std::string extractedText = ocr.GetUTF8Text();
-    std::cout << "\nExtracted text: \n" << extractedText << std::endl;
-*/
+        cv::imshow("Filter", threshold);
+    }*/

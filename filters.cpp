@@ -18,7 +18,7 @@ void Filters::gaussianBlur(cv::Mat &picture, cv::Mat &result){
 }
 
 void Filters::scaleAbs(cv::Mat &picture, cv::Mat &result){
-    cv::convertScaleAbs(picture, result, 1.1, -20);
+    cv::convertScaleAbs(picture, result, 1.1, -2);
 }
 
 void Filters::threshold(cv::Mat &picture, cv::Mat &result){
