@@ -10,9 +10,12 @@ class Processing{
 
         void erode(cv::Mat &picture, cv::Mat &result);
         void dilate(cv::Mat &picture, cv::Mat &result);
-        void sobel(cv::Mat &picture, cv::Mat &result);
         
         ~Processing();
+
+    public:
+        int ksize = 3;
+        int point = -1;
 };
 
 #endif
