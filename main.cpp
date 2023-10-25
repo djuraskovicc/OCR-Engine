@@ -37,7 +37,8 @@ int main(int argc, char *argv[])
     filter.convertToGrayscale(processedImage, processedImage);
     processing.findContours(processedImage);
 
-    processing.drawContours(processedImage); 
+    processing.drawContours(processedImage);
+    processing.filter2D(processedImage, processedImage);
     filter.convertToColor(processedImage, processedImage);
 
     tesseract::TessBaseAPI ocr;

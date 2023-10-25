@@ -27,4 +27,8 @@ void Processing::drawContours(cv::Mat &result){
         cv::drawContours(result, Processing::contours, -1, cv::Scalar(0, 0, 255), 2);
 }
 
+void Processing::filter2D(cv::Mat &picture, cv::Mat &result){
+        cv::filter2D(picture, result, picture.depth(), Processing::kernel);
+}
+
 Processing::~Processing(){}
