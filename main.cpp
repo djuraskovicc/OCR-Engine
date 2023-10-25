@@ -34,8 +34,13 @@ int main(int argc, char *argv[])
     filter.threshold(processedImage, processedImage);
 
     processing.erode(processedImage, processedImage);
+    filter.convertToGrayscale(processedImage, processedImage);
+    processing.findContours(processedImage);
 
-    /*tesseract::TessBaseAPI ocr;
+    processing.drawContours(processedImage); 
+    filter.convertToColor(processedImage, processedImage);
+
+    tesseract::TessBaseAPI ocr;
 
     std::string tessdataPath = "/usr/share/tessdata/";
     setenv("TESSDATA_PREFIX", tessdataPath.c_str(), 1);
@@ -45,15 +50,16 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    ocr.SetPageSegMode(tesseract::PSM_SINGLE_BLOCK);
+    ocr.SetPageSegMode(tesseract::PSM_AUTO);
 
     ocr.SetImage(processedImage.data, processedImage.cols, processedImage.rows, 3, processedImage.step);
     ocr.Recognize(0);
 
     std::string extractedText = ocr.GetUTF8Text();
-    std::cout << "\nExtracted text: \n" << extractedText << std::endl;*/
+    std::cout << "\nExtracted text: \n" << extractedText << std::endl;
 
-    cv::namedWindow("Filter", cv::WINDOW_NORMAL);
+    cv::namedWindow("Contours", cv::WINDOW_NORMAL);
+    cv::imshow("Contours", processedImage);
     cv::waitKey(0);
 
     return 0;

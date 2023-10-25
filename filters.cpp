@@ -34,4 +34,8 @@ void Filters::convertToGrayscale(cv::Mat &picture, cv::Mat &result){
     cv::cvtColor(picture, result, cv::COLOR_BGR2GRAY);
 }
 
+void Filters::convertToColor(cv::Mat &picture, cv::Mat &result){
+    cv::cvtColor(picture, result, cv::COLOR_RGB2BGR);
+}
+
 Filters::~Filters(){}

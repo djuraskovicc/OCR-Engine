@@ -13,6 +13,7 @@ class Filters {
         void threshold(cv::Mat &picture, cv::Mat &result);
         void adaptiveThreshold(cv::Mat &picture, cv::Mat &result);
         void convertToGrayscale(cv::Mat &picture, cv::Mat &result);
+        void convertToColor(cv::Mat &picture, cv::Mat &result);
 
         ~Filters();
 };
