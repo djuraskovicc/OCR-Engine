@@ -30,4 +30,8 @@ void Filters::adaptiveThreshold(cv::Mat &picture, cv::Mat &result){
                                 cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 35, 10);
 }
 
+void Filters::convertToGrayscale(cv::Mat &picture, cv::Mat &result){
+    cv::cvtColor(picture, result, cv::COLOR_BGR2GRAY);
+}
+
 Filters::~Filters(){}

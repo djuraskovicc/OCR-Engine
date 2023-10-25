@@ -1,8 +1,6 @@
 #ifndef PROCESSING_H
 #define PROCESSING_H
 #include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/core.hpp>
 
 class Processing{
     public:
@@ -12,10 +10,6 @@ class Processing{
         void dilate(cv::Mat &picture, cv::Mat &result);
         
         ~Processing();
-
-    public:
-        int ksize = 3;
-        int point = -1;
 };
 
 #endif

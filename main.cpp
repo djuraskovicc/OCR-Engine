@@ -3,41 +3,39 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/core.hpp>
 #include <tesseract/baseapi.h>
-#include <tesseract/ocrclass.h>
 #include <leptonica/allheaders.h>
 #include <cstdlib>
 #include "filters.h"
 #include "processing.h"
 
 
-int main(void)
+int main(int argc, char *argv[])
 {
     Filters filter;
     Processing processing;
-    std::string path;
-    
-    std::cout << "Enter file path: ";
-    std::cin >> path;
 
-    cv::Mat img = cv::imread(path, cv::IMREAD_COLOR);
-    cv::Mat addedFilter, processedImage, erode;
+    if(argc != 2){
+        std::cout << "Usage: " << argv[0] << " + <image_path>" << std::endl;
+        return -1;
+    }
+
+    cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
+    cv::Mat processedImage;
 
     if (img.empty()) {
         std::cerr << "Image not found or couldn't be loaded." << std::endl;
         return -1;
     }
     
-    filter.addBilateralFilter(img, addedFilter);
-    filter.addWeight(addedFilter, img, addedFilter);
-    filter.gaussianBlur(addedFilter, addedFilter);
-    filter.scaleAbs(addedFilter, addedFilter);
-    filter.threshold(addedFilter, addedFilter);
-    filter.~Filters();
+    filter.addBilateralFilter(img, processedImage);
+    filter.addWeight(processedImage, img, processedImage);
+    filter.gaussianBlur(processedImage, processedImage);
+    filter.scaleAbs(processedImage, processedImage);
+    filter.threshold(processedImage, processedImage);
 
-    processing.erode(addedFilter, processedImage);
-    processing.~Processing();
+    processing.erode(processedImage, processedImage);
 
-    tesseract::TessBaseAPI ocr;
+    /*tesseract::TessBaseAPI ocr;
 
     std::string tessdataPath = "/usr/share/tessdata/";
     setenv("TESSDATA_PREFIX", tessdataPath.c_str(), 1);
@@ -53,54 +51,55 @@ int main(void)
     ocr.Recognize(0);
 
     std::string extractedText = ocr.GetUTF8Text();
-    std::cout << "\nExtracted text: \n" << extractedText << std::endl;
+    std::cout << "\nExtracted text: \n" << extractedText << std::endl;*/
 
     cv::namedWindow("Filter", cv::WINDOW_NORMAL);
-    cv::imshow("Filter", processedImage);
-
     cv::waitKey(0);
 
     return 0;
 }
 
-
     /*while (1){
         int c = cv::waitKey(1);
 
         if((char) c == 'q'){
+            std::cout << "Exit" << std::endl;
             break;
         } else if ((char) c == 'b'){
             std::cout << "Pressed B" << std::endl;
-            processing.ksize += 2;
-            std::cout << "ksize value: " << processing.ksize << std::endl;
-            processing.erode(addedFilter, processedImage);
+            processing.h += 2;
+            std::cout << "h value: " << processing.h << std::endl;
+            processing.removeNoise(processedImage, test);
         } else if ((char) c == 'c'){
             std::cout << "Pressed C" << std::endl;
-            processing.ksize -= 2;
-            std::cout << "ksize value: " << processing.ksize << std::endl;
-            processing.erode(addedFilter, processedImage);
+            processing.h -= 2;
+            std::cout << "h value: " << processing.h << std::endl;
+            processing.removeNoise(processedImage, test);
         } else if ((char) c == 'd'){
             std::cout << "Pressed D" << std::endl;
-            processing.point += 1;
-            std::cout << "point value: " << processing.point << std::endl;
-            processing.erode(addedFilter, processedImage);
+            processing.teplateWindowSize += 1;
+            std::cout << "teplateWindowSize value: " << processing.teplateWindowSize << std::endl;
+            processing.removeNoise(processedImage, test);
         } else if ((char) c == 'e'){
             std::cout << "Pressed E" << std::endl;
-            processing.point -= 1;
-            std::cout << "point value: " << processing.point << std::endl;
-            processing.erode(addedFilter, processedImage);
+            processing.teplateWindowSize -= 1;
+            std::cout << "teplateWindowSize value: " << processing.teplateWindowSize << std::endl;
+            processing.removeNoise(processedImage, test);
         } else if ((char) c == 'f'){
             std::cout << "Pressed D" << std::endl;
-            processing.ksize += 1;
-            std::cout << "ksize value: " << processing.ksize << std::endl;
-            processing.sobel(processedImage, sobel);
+            processing.searchWindowSize += 1;
+            std::cout << "searchWindowSize value: " << processing.searchWindowSize << std::endl;
+            processing.removeNoise(processedImage, test);
         } else if ((char) c == 'g'){
             std::cout << "Pressed E" << std::endl;
-            processing.ksize -= 1;
-            std::cout << "ksize value: " << processing.ksize << std::endl;
-            processing.sobel(processedImage, sobel);
+            processing.searchWindowSize -= 1;
+            std::cout << "searchWindowSize value: " << processing.searchWindowSize << std::endl;
+            processing.removeNoise(processedImage, test);
         }
 
+        cv::namedWindow("Before", cv::WINDOW_NORMAL);
+        cv::imshow("Before", processedImage);
+
         cv::namedWindow("Filter", cv::WINDOW_NORMAL);
-        cv::imshow("Filter", processedImage);
+        cv::imshow("Filter", test);
     }*/
