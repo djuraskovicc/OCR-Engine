@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/core.hpp>
@@ -41,23 +42,32 @@ int main(int argc, char *argv[])
     processing.filter2D(processedImage, processedImage);
     filter.convertToColor(processedImage, processedImage);
 
-    tesseract::TessBaseAPI ocr;
+    tesseract::TessBaseAPI *ocr = new tesseract::TessBaseAPI();
 
     std::string tessdataPath = "/usr/share/tessdata/";
     setenv("TESSDATA_PREFIX", tessdataPath.c_str(), 1);
 
-    if (ocr.Init(NULL, "eng+srp_latn")) {
+    if (ocr->Init(NULL, "eng+srp_latn", tesseract::OEM_LSTM_ONLY)) {
         std::cerr << "Could not initialize Tesseract." << std::endl;
         return -1;
     }
 
-    ocr.SetPageSegMode(tesseract::PSM_AUTO);
+    ocr->SetPageSegMode(tesseract::PSM_SINGLE_BLOCK);
 
-    ocr.SetImage(processedImage.data, processedImage.cols, processedImage.rows, 3, processedImage.step);
-    ocr.Recognize(0);
+    ocr->SetImage(processedImage.data, processedImage.cols, processedImage.rows, 3, processedImage.step);
+    ocr->Recognize(0);
 
-    std::string extractedText = ocr.GetUTF8Text();
-    std::cout << "\nExtracted text: \n" << extractedText << std::endl;
+    std::string extractedText = ocr->GetUTF8Text();
+    std::ofstream outputFile("output.txt");
+
+    if (!outputFile) {
+        std::cerr << "Could not open the output file." << std::endl;
+        return -1;
+    }
+    
+    outputFile << extractedText;
+    outputFile.close();
+    ocr->End();
 
     cv::namedWindow("Contours", cv::WINDOW_NORMAL);
     cv::imshow("Contours", processedImage);
@@ -65,48 +75,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
-    /*while (1){
-        int c = cv::waitKey(1);
-
-        if((char) c == 'q'){
-            std::cout << "Exit" << std::endl;
-            break;
-        } else if ((char) c == 'b'){
-            std::cout << "Pressed B" << std::endl;
-            processing.h += 2;
-            std::cout << "h value: " << processing.h << std::endl;
-            processing.removeNoise(processedImage, test);
-        } else if ((char) c == 'c'){
-            std::cout << "Pressed C" << std::endl;
-            processing.h -= 2;
-            std::cout << "h value: " << processing.h << std::endl;
-            processing.removeNoise(processedImage, test);
-        } else if ((char) c == 'd'){
-            std::cout << "Pressed D" << std::endl;
-            processing.teplateWindowSize += 1;
-            std::cout << "teplateWindowSize value: " << processing.teplateWindowSize << std::endl;
-            processing.removeNoise(processedImage, test);
-        } else if ((char) c == 'e'){
-            std::cout << "Pressed E" << std::endl;
-            processing.teplateWindowSize -= 1;
-            std::cout << "teplateWindowSize value: " << processing.teplateWindowSize << std::endl;
-            processing.removeNoise(processedImage, test);
-        } else if ((char) c == 'f'){
-            std::cout << "Pressed D" << std::endl;
-            processing.searchWindowSize += 1;
-            std::cout << "searchWindowSize value: " << processing.searchWindowSize << std::endl;
-            processing.removeNoise(processedImage, test);
-        } else if ((char) c == 'g'){
-            std::cout << "Pressed E" << std::endl;
-            processing.searchWindowSize -= 1;
-            std::cout << "searchWindowSize value: " << processing.searchWindowSize << std::endl;
-            processing.removeNoise(processedImage, test);
-        }
-
-        cv::namedWindow("Before", cv::WINDOW_NORMAL);
-        cv::imshow("Before", processedImage);
-
-        cv::namedWindow("Filter", cv::WINDOW_NORMAL);
-        cv::imshow("Filter", test);
-    }*/
