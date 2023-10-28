@@ -12,8 +12,8 @@
 
 int main(int argc, char *argv[])
 {
-    Filters filter;
-    Processing processing;
+    Filters *filter = new Filters();
+    Processing *processing = new Processing();
 
     if(argc != 2){
         std::cout << "Usage: " << argv[0] << " + <image_path>" << std::endl;
@@ -28,19 +28,21 @@ int main(int argc, char *argv[])
         return -1;
     }
     
-    filter.addBilateralFilter(img, processedImage);
-    filter.addWeight(processedImage, img, processedImage);
-    filter.gaussianBlur(processedImage, processedImage);
-    filter.scaleAbs(processedImage, processedImage);
-    filter.threshold(processedImage, processedImage);
+    filter->addBilateralFilter(img, processedImage);
+    filter->addWeight(processedImage, img, processedImage);
+    filter->gaussianBlur(processedImage, processedImage);
+    filter->scaleAbs(processedImage, processedImage);
+    filter->threshold(processedImage, processedImage);
 
-    processing.erode(processedImage, processedImage);
-    filter.convertToGrayscale(processedImage, processedImage);
-    processing.findContours(processedImage);
+    processing->erode(processedImage, processedImage);
+    filter->convertToGrayscale(processedImage, processedImage);
+    processing->findContours(processedImage);
 
-    processing.drawContours(processedImage);
-    processing.filter2D(processedImage, processedImage);
-    filter.convertToColor(processedImage, processedImage);
+    processing->drawContours(processedImage);
+    processing->filter2D(processedImage, processedImage);
+    filter->convertToColor(processedImage, processedImage);
+    filter->~Filters();
+    processing->~Processing();
 
     tesseract::TessBaseAPI *ocr = new tesseract::TessBaseAPI();
 
