@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/core.hpp>
@@ -9,6 +10,13 @@
 #include "filters.h"
 #include "processing.h"
 
+std::string removeExtension(const std::string &fileName){
+    size_t lastDot = fileName.find_last_of(".");
+    if (lastDot != std::string::npos) {
+        return fileName.substr(0, lastDot);
+    }
+    return fileName;
+}
 
 int main(int argc, char *argv[])
 {
@@ -60,7 +68,11 @@ int main(int argc, char *argv[])
     ocr->Recognize(0);
 
     std::string extractedText = ocr->GetUTF8Text();
-    std::ofstream outputFile("output.txt");
+
+    std::string imagePath = argv[1];
+    std::string imageName = imagePath.substr(imagePath.find_last_of("/") + 1);
+
+    std::ofstream outputFile("output_" + removeExtension(imageName) + ".txt");
 
     if (!outputFile) {
         std::cerr << "Could not open the output file." << std::endl;
@@ -70,10 +82,6 @@ int main(int argc, char *argv[])
     outputFile << extractedText;
     outputFile.close();
     ocr->End();
-
-    cv::namedWindow("Contours", cv::WINDOW_NORMAL);
-    cv::imshow("Contours", processedImage);
-    cv::waitKey(0);
 
     return 0;
 }
