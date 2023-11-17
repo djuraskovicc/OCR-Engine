@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++17
+CXXFLAGS = -std=c++17 -O3 -march=native -Wall
 LIBS = $(shell pkg-config --cflags --libs opencv4) -L/usr/include/leptonica -ltesseract
 
 SRC = main.cpp filters.cpp filters.h processing.cpp processing.h

@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
+    cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
     cv::Mat processedImage;
 
     if (img.empty()) {
@@ -40,12 +40,10 @@ int main(int argc, char *argv[])
     filter->addWeight(processedImage, img, processedImage);
     filter->gaussianBlur(processedImage, processedImage);
     filter->scaleAbs(processedImage, processedImage);
-    filter->threshold(processedImage, processedImage);
+    filter->adaptiveThreshold(processedImage, processedImage);
 
     processing->erode(processedImage, processedImage);
-    filter->convertToGrayscale(processedImage, processedImage);
     processing->findContours(processedImage);
-
     processing->drawContours(processedImage);
     processing->filter2D(processedImage, processedImage);
     filter->convertToColor(processedImage, processedImage);
@@ -57,7 +55,7 @@ int main(int argc, char *argv[])
     std::string tessdataPath = "/usr/share/tessdata/";
     setenv("TESSDATA_PREFIX", tessdataPath.c_str(), 1);
 
-    if (ocr->Init(NULL, "eng+srp_latn", tesseract::OEM_LSTM_ONLY)) {
+    if (ocr->Init(NULL, "eng+srp_latn+srp", tesseract::OEM_LSTM_ONLY)) {
         std::cerr << "Could not initialize Tesseract." << std::endl;
         return -1;
     }
@@ -68,6 +66,7 @@ int main(int argc, char *argv[])
     ocr->Recognize(0);
 
     std::string extractedText = ocr->GetUTF8Text();
+    //std::cout << "Text: \n\n" << extractedText << std::endl;
 
     std::string imagePath = argv[1];
     std::string imageName = imagePath.substr(imagePath.find_last_of("/") + 1);
@@ -82,6 +81,10 @@ int main(int argc, char *argv[])
     outputFile << extractedText;
     outputFile.close();
     ocr->End();
+
+    //cv::namedWindow("Filter", cv::WINDOW_NORMAL);
+    //cv::imshow("Filter", processedImage);
+    //cv::waitKey(0);
 
     return 0;
 }
