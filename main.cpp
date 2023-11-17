@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
     ocr->Recognize(0);
 
     std::string extractedText = ocr->GetUTF8Text();
-    //std::cout << "Text: \n\n" << extractedText << std::endl;
+    std::cout << "Text: \n\n" << extractedText << std::endl;
 
     std::string imagePath = argv[1];
     std::string imageName = imagePath.substr(imagePath.find_last_of("/") + 1);
